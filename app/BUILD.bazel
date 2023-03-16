@@ -1,0 +1,29 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("@build_bazel_rules_android//android:rules.bzl", "android_binary", "android_library")
+
+android_library(
+    name = "lib",
+    srcs = glob(["java/**/*.java"]),
+    custom_package = "com.example.android",
+    manifest = "LibraryManifest.xml",
+    resource_files = glob(["res/**/*"]),
+    deps = [
+        ":jni_lib",
+    ],
+)
+
+cc_library(
+    name = "jni_lib",
+    srcs = ["cpp/native-lib.cc"],
+    alwayslink = 1,
+    linkopts = ["-llog"],
+)
+cc_library(
+    name = "libcpp",
+    srcs = ["@androidndk//:libcpp-x86_64-dynamic-runtime-libraries"],
+)
+android_binary(
+    name = "app",
+    manifest = "AndroidManifest.xml",
+    deps = [":lib", "//lib:hello", ":libcpp"],
+)
