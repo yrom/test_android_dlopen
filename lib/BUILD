@@ -1,29 +1,44 @@
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library")
 
+cc_library(
+    name = "hello_header",
+    hdrs = [
+        "hello.h",
+    ],
+    includes = [
+        ".",
+    ],
+    visibility = ["//visibility:public"],
+)
 
 cc_binary(
     name = "libhello.so",
-    srcs = ["hello.cc"],
+    srcs = [
+        "hello.cc",
+    ],
     copts = [
         "-fvisibility=hidden",
-    ],
-    deps = [
-        ":version_script.lds"
     ],
     linkopts = [
         "-llog",
         "-Wl,-soname,libhello.so",
-        "-lc++_shared",
-         "-Wl,--version-script,$(location :version_script.lds)",
+        "-Wl,--version-script,$(location :version_script.lds)",
     ],
     linkshared = 1,
-    linkstatic = 0,
+    linkstatic = 1,
+    deps = [
+        ":hello_header",
+        ":version_script.lds",
+    ],
 )
 
 cc_library(
     name = "hello",
-    visibility = ["//visibility:public"],
     srcs = [
         "libhello.so",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":hello_header",
     ],
 )

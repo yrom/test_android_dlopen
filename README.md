@@ -11,11 +11,13 @@ adb logcat
 
 Logcat:
 
-    03-16 20:36:54.823  5731  5731 I native-lib.cc: dlopen(libhello.so): OK
-    03-16 20:36:54.823  5731  5731 I native-lib.cc: get_greet: 0x7eff2db0db50
-    03-16 20:36:54.823  5731  5731 I hello.cc: get_greet(world)
-    03-16 20:36:54.823  5731  5731 I hello.cc: ret: Hello world, 11
-    03-16 20:36:54.823  5731  5731 I native-lib.cc: get_greet(world)->Hello world, 11
-    03-16 20:36:54.823  5731  5731 I native-lib.cc: add(0) -> 42
-    03-16 20:36:54.823  5731  5731 I native-lib.cc: add(1) -> 43
-    03-16 20:36:54.823  5731  5731 I native-lib.cc: add(2) -> 44
+    03-17 14:39:29.268  7356  7356 I hello-stub.cc: dlopen(libhello.so): OK
+    03-17 14:39:29.268  7356  7356 I hello-stub.cc: call C_get_greet from stub
+    03-17 14:39:29.268  7356  7356 I hello.cc: get_greet('libhello.so')
+    03-17 14:39:29.268  7356  7356 I hello.cc: ret: 'Hello libhello.so', 17
+    03-17 14:39:29.268  7356  7356 I hello-stub.cc: call C_add from stub
+    03-17 14:39:29.268  7356  7356 I native-lib.cc: add(0)->44
+    03-17 14:39:29.268  7356  7356 I hello-stub.cc: call C_add from stub
+    03-17 14:39:29.268  7356  7356 I native-lib.cc: add(1)->45
+    03-17 14:39:29.268  7356  7356 I hello-stub.cc: call C_add from stub
+    03-17 14:39:29.268  7356  7356 I native-lib.cc: add(2)->46

@@ -8,22 +8,48 @@ android_library(
     manifest = "LibraryManifest.xml",
     resource_files = glob(["res/**/*"]),
     deps = [
-        ":jni_lib",
+        ":jni_lib_using_stub",
+        #":jni_lib",
     ],
 )
+# stubing libhello.so
+cc_library(
+    name = "hello_stub",
+    srcs = ["cpp/hello-stub.cc"],
+    linkopts = ["-llog"],
+    deps = [
+        "//lib:hello_header",
+    ],
+    alwayslink = 1,
+)
 
+
+cc_library(
+    name = "jni_lib_using_stub",
+    srcs = ["cpp/native-lib.cc"],
+    linkopts = ["-llog"],
+    deps = [
+        ":hello_stub",
+    ],
+    alwayslink = 1,
+)
+# directly linking to libhello.so
 cc_library(
     name = "jni_lib",
     srcs = ["cpp/native-lib.cc"],
-    alwayslink = 1,
     linkopts = ["-llog"],
+    deps = [
+        "//lib:hello",
+    ],
+    alwayslink = 1,
 )
-cc_library(
-    name = "libcpp",
-    srcs = ["@androidndk//:libcpp-x86_64-dynamic-runtime-libraries"],
-)
+
+
 android_binary(
     name = "app",
     manifest = "AndroidManifest.xml",
-    deps = [":lib", "//lib:hello", ":libcpp"],
+    deps = [
+        ":lib",
+        "//lib:hello",
+    ],
 )
