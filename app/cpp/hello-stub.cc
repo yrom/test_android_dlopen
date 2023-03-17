@@ -1,6 +1,7 @@
 #include <android/log.h>
 #include <dlfcn.h>
 #include <hello.h>
+#include <map>
 #define TAG __FILE_NAME__
 #define LOGI(...)                                                              \
   ((void)__android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__))
@@ -23,13 +24,19 @@ void *tryLoadLibrary() {
     return nullptr;
   }
 }
+static std::map<const char *, void *> fptrs;
 void *getFunctionPointer(const char *func) {
-  void *handle = tryLoadLibrary();
-  void *fptr = !handle ? nullptr : dlsym(handle, func);
+  auto iter = fptrs.find(func);
+  void *fptr = iter != fptrs.end() ? iter->second : nullptr;
   if (!fptr) {
-    LOGI("Could not get function pointer for \"%s\":\nError: %s\n\n", func,
-         dlerror());
-    return nullptr;
+    void *handle = tryLoadLibrary();
+    fptr = !handle ? nullptr : dlsym(handle, func);
+    fptrs[func] = fptr;
+    if (!fptr) {
+      LOGI("Could not get function pointer for \"%s\":\nError: %s\n\n", func,
+           dlerror());
+      return nullptr;
+    }
   }
   return fptr;
 }
